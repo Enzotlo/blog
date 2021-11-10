@@ -14,7 +14,7 @@ class ContactController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('contact/index.html.twig', [
+        return $this->render('pages/contact.html.twig', [
         ]);
     }
     /**
@@ -23,7 +23,7 @@ class ContactController extends AbstractController
     public function ContactTypes(Request $request, string $type): Response
     {
         $name = $request->query->get('name');
-        return $this->render('contact/index.html.twig', [
+        return $this->render('pages/contact.html.twig', [
             'name' => $name,
             'type' => $type
         ]);

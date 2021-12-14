@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
+use App\Form\ArticlesType;
+use App\Repository\ContactRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,22 +13,45 @@ use Symfony\Component\Routing\Annotation\Route;
 class ContactController extends AbstractController
 {
     /**
-     * @Route("/contact", name="contact")
-     */
-    public function index(): Response
+     * @var ContactRepository
+     * */
+    private $contactRepository;
+
+    public function __construct(ContactRepository $contactRepository)
     {
-        return $this->render('pages/contact.html.twig', [
-        ]);
+        $this->contactRepository = $contactRepository;
     }
     /**
-     * @Route("/contact/{type}", name="contactType")
+     * @Route("/contact", name="contact")
      */
-    public function ContactTypes(Request $request, string $type): Response
+    public function index(Request $request): Response
     {
-        $name = $request->query->get('name');
+        $contact = new Contact();
+
+        $form = $this->createForm(ArticlesType::class, $contact);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($form->getData());
+            $entityManager->flush();
+        }
+
         return $this->render('pages/contact.html.twig', [
-            'name' => $name,
-            'type' => $type
+            'contacts' => $this->contactRepository->findAll(),
+            'form' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/contact/{id}", name="contactId")
+     */
+    public function ContactIds(Request $request, int $id): Response
+    {
+        return $this->render('pages/contact.html.twig', [
+            'contact' => $this->contactRepository->find($id)
+        ]);
+    }
+
 }
+

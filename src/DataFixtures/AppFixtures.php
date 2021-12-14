@@ -10,12 +10,16 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $contact = new Contact();
-        $contact->setName('Tueleau');
-        $contact->setFirstName('Enzo');
-
-        $manager->persist($contact);
-
+        for($i = 0; $i<=5; $i++) {
+            $contact = new Contact();
+            $contact->setName('Tueleau');
+            $contact->setFirstName('Enzo');
+            $contact->setEmail('user' . $i . '@gmail.com');
+            $contact->setMessage('Test');
+            $contact->setNewsletter('Newsletter');
+            $contact->setSujet('Sujet #' . $i);
+            $manager->persist($contact);
+        }
         $manager->flush();
     }
 }
